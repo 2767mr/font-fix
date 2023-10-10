@@ -12,15 +12,15 @@ function openFile() {
 }
 
 async function convertFiles(files) {
-    const images = await Promise.all(files.map(convertBlobToImage));
+    const images = await Promise.all(files.map(async f => [await convertBlobToImage(f), f.name]));
 
     const inputCanvas = document.createElement('canvas');
     const inputCtx = inputCanvas.getContext('2d');
     const outputCanvas = document.createElement('canvas');
     const outputCtx = outputCanvas.getContext('2d');
 
-    for (const image of images) {
-        fixImage(inputCanvas, inputCtx, outputCanvas, outputCtx, image);
+    for (const [image, name] of images) {
+        fixImage(inputCanvas, inputCtx, outputCanvas, outputCtx, image, name);
     }
 }
 
@@ -29,7 +29,7 @@ async function convertFiles(files) {
  * @param {CanvasRenderingContext2D } inputCtx 
  * @param {HTMLImageElement} image 
  */
-function fixImage(inputCanvas, inputCtx, outputCanvas, outputCtx, image) {
+function fixImage(inputCanvas, inputCtx, outputCanvas, outputCtx, image, name) {
     const nextPowerOfTwo = (num) => Math.pow(2, Math.ceil(Math.log2(num)));
     inputCanvas.width = image.width;
     inputCanvas.height = image.height;
@@ -44,12 +44,12 @@ function fixImage(inputCanvas, inputCtx, outputCanvas, outputCtx, image) {
     const totalheight = findLowestLine(imageData, inputCanvas.width, inputCanvas.height) + 1;
     const lineHeight = findLineHeight(imageData, inputCanvas.width, inputCanvas.height, totalheight);
     fixIcons(imageData, inputCanvas, lineHeight, outputCtx, inputCanvas.width, inputCanvas.height, outputCanvas.width, outputCanvas.height);
-    download(outputCanvas);
+    download(outputCanvas, name);
 }
 
-function download(outputCanvas) {
+function download(outputCanvas, name) {
     let downloadLink = document.createElement('a');
-    downloadLink.setAttribute('download', 'result.png');
+    downloadLink.setAttribute('download', name);
     let dataURL = outputCanvas.toDataURL('image/png');
     let url = dataURL.replace(/^data:image\/png/, 'data:application/octet-stream');
     downloadLink.setAttribute('href', url);
