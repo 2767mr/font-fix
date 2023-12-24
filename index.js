@@ -85,7 +85,7 @@ function findLineHeight(imageData, width, height, totalheight, name) {
     };
 
     if (predefined[name]) {
-        return predefined[name];
+        // return predefined[name];
     }
 
     const pixelData = imageData.data;
