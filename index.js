@@ -42,7 +42,7 @@ function fixImage(inputCanvas, inputCtx, outputCanvas, outputCtx, image, name) {
 
     const imageData = inputCtx.getImageData(0, 0, inputCanvas.width, inputCanvas.height);
     const totalheight = findLowestLine(imageData, inputCanvas.width, inputCanvas.height) + 1;
-    const lineHeight = findLineHeight(imageData, inputCanvas.width, inputCanvas.height, totalheight);
+    const lineHeight = findLineHeight(imageData, inputCanvas.width, inputCanvas.height, totalheight, name);
     fixIcons(imageData, inputCanvas, lineHeight, outputCtx, inputCanvas.width, inputCanvas.height, outputCanvas.width, outputCanvas.height);
     download(outputCanvas, name);
 }
@@ -56,7 +56,38 @@ function download(outputCanvas, name) {
     downloadLink.click();
 }
 
-function findLineHeight(imageData, width, height, totalheight) {
+function findLineHeight(imageData, width, height, totalheight, name) {
+    const predefined = {
+        "icons.png": 16,
+        "icons-small.png": 14,
+        "icons-keyboard.png": 16,
+        "icons-gamepad.png": 16,
+        "icons-items.png": 16,
+        "icons-buff.png": 8,
+        "icons-buff-large.png": 16,
+        "languages.png": 16,
+        "hall-fetica-bold-red.png": 16,
+        "hall-fetica-bold-green.png": 16,
+        "hall-fetica-bold-purple.png": 16,
+        "hall-fetica-bold-grey.png": 16,
+        "hall-fetica-small-orange.png": 13,
+        "tiny-orange.png": 7,
+        "hall-fetica-small-purple.png": 13,
+        "hall-fetica-small-grey.png": 13,
+        "tiny-grey.png": 7,
+        "hall-fetica-small-red.png": 13,
+        "tiny-red.png": 7,
+        "hall-fetica-small-green.png": 13,
+        "tiny-green.png": 7,
+        "hall-fetica-bold.png": 16,
+        "hall-fetica-small.png": 13,
+        "tiny.png": 7,
+    };
+
+    if (predefined[name]) {
+        return predefined[name];
+    }
+
     const pixelData = imageData.data;
     const pixelWidth = width * 4; // 4 bytes per pixel (RGBA)
     for (let y = 2; y < height; y++) {
